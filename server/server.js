@@ -26,18 +26,17 @@ app.get('/', (req, res) => {
   res.json({ message: 'SCIEP API is running...', dbStatus: mongoose.connection.readyState });
 });
 
+console.log('Starting SCIEP Server...');
+
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/sciep';
 
+// Start server first to satisfy Render's health check
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server is LIVE on port ${PORT}`);
 });
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => {
-      console.error('MongoDB connection error:', err);
-      // In production, we don't want to kill the process usually, 
-      // but we want to know it failed.
-  });
+// Connect to DB in background
+mongoose.connect(MONGO_URI)
+  .then(() => console.log('Database Connected Successfully'))
+  .catch(err => console.error('Database Error:', err.message));
